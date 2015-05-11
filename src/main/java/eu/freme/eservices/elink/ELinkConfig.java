@@ -1,9 +1,12 @@
 package eu.freme.eservices.elink;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@ComponentScan("eu.freme.eservices.elink.api")
 public class ELinkConfig {
+	@Bean
+	public DataEnricher getDataEnricher(){
+		return new DataEnricher();
+	}
 }

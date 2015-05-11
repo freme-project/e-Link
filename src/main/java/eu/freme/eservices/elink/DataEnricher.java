@@ -17,15 +17,11 @@ import java.util.HashMap;
  */
 public class DataEnricher {
 
-    private static DataEnricher instance = null;    
-    private HashMap<Integer, Template> templates = new HashMap();
+    private HashMap<Integer, Template> templates = new HashMap<Integer, Template>();
     private boolean initialized = false;
     
-    public static DataEnricher getInstance() {
-        if(instance == null) {
-            instance = new DataEnricher();
-        }
-        return instance;
+    public DataEnricher(){
+    	init();
     }
     
     /**
