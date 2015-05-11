@@ -1,5 +1,7 @@
 # FREME e-Link service
 
+The service is in details described [here](https://github.com/freme-project/technical-discussion/wiki/Broker-API-Calls#user-content-e-link).
+
 ## Building
 
 ### Requirements
