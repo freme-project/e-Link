@@ -7,3 +7,7 @@ DataEnricher.class
 e-link-0.0.1-SNAPSHOT.jar
 e-link-0.0.1-SNAPSHOT-jar-with-dependencies.jar
 e-link-0.0.1-SNAPSHOT.jar.original
+/target/
+.classpath
+.project
+.settings
