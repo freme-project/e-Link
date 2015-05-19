@@ -34,8 +34,6 @@ Learn how to start the broker [here](https://github.com/freme-project/technical-
 * develop API for creating/update/listing available templates
   * possible develop simple GUI for template editing 
 * document best practices for developing templates
-* support for dataset specific entity linking
-  * user can upload his data and perform entity recognition against this dataset
 
 ### Complete
 
