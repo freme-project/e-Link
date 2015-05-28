@@ -62,10 +62,10 @@ public class DataEnricher {
      */
     private void init() {
         
-            Template t = new Template();
-            t.setId(1);
-            t.setEndpoint("http://dbpedia.org/sparql");
-            String query =
+            Template t1 = new Template();
+            t1.setId(1);
+            t1.setEndpoint("http://dbpedia.org/sparql");
+            String query1 =
                     "PREFIX dbpedia: <http://dbpedia.org/resource/> "
                     + "PREFIX dbpedia-owl: <http://dbpedia.org/ontology/> "
                     + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
@@ -79,7 +79,23 @@ public class DataEnricher {
                     + "?museum geo:geometry ?museumgeo ."
                     + "FILTER (<bif:st_intersects>(?museumgeo, ?citygeo, 10)) "
                     + "} LIMIT 10";
-            t.setQuery(query);
-            templates.put(t.getId(), t);    
+            t1.setQuery(query1);
+            
+            Template t2 = new Template();
+            t2.setId(2);
+            t2.setEndpoint("http://live.dbpedia.org/sparql");
+            String query2 =
+                    "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
+                    + " CONSTRUCT { "
+                    + "?event <http://dbpedia.org/ontology/place> <@@@entity_uri@@@> . "
+                    +" } "
+                    + " WHERE { "
+                    + " ?event rdf:type <http://dbpedia.org/ontology/Event> . "
+                    + " ?event <http://dbpedia.org/ontology/place> <@@@entity_uri@@@> . "
+                    + " } LIMIT 10";
+            t2.setQuery(query2);
+            
+            templates.put(t1.getId(), t1);    
+            templates.put(t2.getId(), t2);    
     }
 }

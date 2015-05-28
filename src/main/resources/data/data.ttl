@@ -21,29 +21,25 @@
 @prefix rutt:  <http://rdfunit.aksw.org/data/tests#> .
 @prefix ruts:  <http://rdfunit.aksw.org/data/testsuite#> .
 
-<http://127.0.0.1:9995/spotlight#char=5,7>
+<http://127.0.0.1:9995/spotlight#char=0,15>
+        a                     nif:Context , nif:Sentence , nif:RFC5147String ;
+        nif:anchorOf          "This is Berlin." ;
+        nif:beginIndex        "0" ;
+        nif:endIndex          "15" ;
+        nif:isString          "This is Berlin." ;
+        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,15> .
+
+<http://127.0.0.1:9995/spotlight#char=8,15>
         a                     nif:Word , nif:RFC5147String ;
-        nif:anchorOf          "is" ;
-        nif:beginIndex        "5" ;
-        nif:endIndex          "7" ;
-        nif:nextWord          <http://127.0.0.1:9995/spotlight#char=8,15> ;
-        nif:previousWord      <http://127.0.0.1:9995/spotlight#char=0,4> ;
-        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        nif:sentence          <http://127.0.0.1:9995/spotlight#char=0,16> .
+        nif:anchorOf          "Berlin" ;
+        nif:beginIndex        "8" ;
+        nif:endIndex          "14" ;
+        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,15> ;
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Berlin> .
 
 nif:lastWord  a  owl:ObjectProperty .
 
 nif:previousWord  a  owl:ObjectProperty .
-
-<http://127.0.0.1:9995/spotlight#char=0,4>
-        a                     nif:Word , nif:RFC5147String ;
-        nif:anchorOf          "This" ;
-        nif:beginIndex        "0" ;
-        nif:endIndex          "4" ;
-        nif:nextWord          <http://127.0.0.1:9995/spotlight#char=5,7> ;
-        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        nif:sentence          <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        itsrdf:taIdentRef     <http://dbpedia.org/resource/Sathya_Sai_Baba> .
 
 <urn:uuid:1eb52471-ce7e-4761-a161-07fb201be3ba>
         a             rlog:Entry ;
@@ -73,17 +69,6 @@ nif:sentence  a  owl:ObjectProperty .
 
 nif:anchorOf  a  owl:DatatypeProperty .
 
-<http://127.0.0.1:9995/spotlight#char=0,16>
-        a                     nif:Context , nif:Sentence , nif:RFC5147String ;
-        nif:anchorOf          "This is Germany." ;
-        nif:beginIndex        "0" ;
-        nif:endIndex          "16" ;
-        nif:firstWord         <http://127.0.0.1:9995/spotlight#char=0,4> ;
-        nif:isString          "This is Germany." ;
-        nif:lastWord          <http://127.0.0.1:9995/spotlight#char=15,16> ;
-        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        nif:word              <http://127.0.0.1:9995/spotlight#char=5,7> , <http://127.0.0.1:9995/spotlight#char=8,15> .
-
 rlog:date  a    owl:DatatypeProperty .
 
 nif:firstWord  a  owl:ObjectProperty .
@@ -96,27 +81,7 @@ nif:Sentence  a  owl:Class .
 
 nif:referenceContext  a  owl:ObjectProperty .
 
-<http://127.0.0.1:9995/spotlight#char=15,16>
-        a                     nif:Word , nif:RFC5147String ;
-        nif:anchorOf          "." ;
-        nif:beginIndex        "15" ;
-        nif:endIndex          "16" ;
-        nif:previousWord      <http://127.0.0.1:9995/spotlight#char=8,15> ;
-        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        nif:sentence          <http://127.0.0.1:9995/spotlight#char=0,16> .
-
 nif:endIndex  a  owl:DatatypeProperty .
-
-<http://127.0.0.1:9995/spotlight#char=8,15>
-        a                     nif:Word , nif:RFC5147String ;
-        nif:anchorOf          "Germany" ;
-        nif:beginIndex        "8" ;
-        nif:endIndex          "15" ;
-        nif:nextWord          <http://127.0.0.1:9995/spotlight#char=15,16> ;
-        nif:previousWord      <http://127.0.0.1:9995/spotlight#char=5,7> ;
-        nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        nif:sentence          <http://127.0.0.1:9995/spotlight#char=0,16> ;
-        itsrdf:taIdentRef     <http://dbpedia.org/resource/Germany> .
 
 nif:RFC5147String  a  owl:Class .
 
