@@ -100,7 +100,7 @@
 			<url>http://rv1443.1blu.de/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
+
 	<repositories>
 		<repository>
 			<id>freme-release</id>
@@ -119,4 +119,11 @@
 			</releases>
 		</repository>
 	</repositories>
+
+	<scm>
+		<connection>scm:git:git@github.com:freme-project/e-Link.git</connection>
+		<url>scm:git:git@github.com/freme-project:e-Link.git</url>
+		<developerConnection>scm:git:git@github.com:freme-project/e-Link.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 </project>
