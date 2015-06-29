@@ -8,21 +8,27 @@ package eu.freme.eservices.elink;
  */
 public class Template {
     
-    private int id;
+    private String id;
     private String endpoint;
     private String query;
 
+    public Template(String id, String endpoint, String query) {
+        this.id = id;
+        this.endpoint = endpoint;
+        this.query = query;
+    }
+    
     /**
      * @return the id
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
