@@ -40,10 +40,10 @@ public class TemplateDAO {
         
         templatesModel = ModelFactory.createDefaultModel();
         try {
-            URL url =  this.getClass().getResource("/data/templates.ttl");
-            templatesModel.read(url.getPath());
+//            URL url =  this.getClass().getResource("/data/templates.ttl");
+//            templatesModel.read(url.getPath());
 //            templatesModel.read("/Users/Milan/Documents/research/repositories/freme-project-repos/e-Link/src/main/resources/data/templates.ttl");
-            logger.info("The templates have been successfully loaded.");
+//            logger.info("The templates have been successfully loaded.");
         } catch (org.apache.jena.riot.RiotException ex) {
             throw new WrongTemplateSyntaxException("The templates could not been loaded. Some of the templates have wrong syntax");
         }
