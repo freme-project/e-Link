@@ -42,7 +42,7 @@ public class TemplateDAO {
         try {
 //            URL url =  this.getClass().getResource("/data/templates.ttl");
 //            templatesModel.read(url.getPath());
-//            templatesModel.read("/opt/freme/workspace/templates.ttl");
+            templatesModel.read("/home/u231015/workspace/templates.ttl");
 //            templatesModel.read("/Users/Milan/Documents/research/repositories/freme-project-repos/e-Link/src/main/resources/data/templates.ttl");
 //            logger.info("The templates have been successfully loaded.");
         } catch (org.apache.jena.riot.RiotException ex) {
