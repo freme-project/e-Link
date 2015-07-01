@@ -50,6 +50,7 @@ public class TemplateDAO {
         }
     }
     
+    
     // Returns template by its ID.
     public Template getTemplateById(String id) {
         
