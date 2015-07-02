@@ -21,18 +21,17 @@
 @prefix rutt:  <http://rdfunit.aksw.org/data/tests#> .
 @prefix ruts:  <http://rdfunit.aksw.org/data/testsuite#> .
 
-<http://127.0.0.1:9995/spotlight#char=0,15>
+<http://127.0.0.1:9995/spotlight#char=0,16>
         a                     nif:Context , nif:Sentence , nif:RFC5147String ;
-        nif:anchorOf          "This is Berlin." ;
         nif:beginIndex        "0" ;
-        nif:endIndex          "15" ;
-        nif:isString          "This is Berlin." ;
+        nif:endIndex          "16" ;
+        nif:isString          "This is Leipzig." ;
         nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,15> .
 
 <http://127.0.0.1:9995/spotlight#char=8,15>
         a                     nif:Word , nif:RFC5147String ;
-        nif:anchorOf          "Berlin" ;
+        nif:anchorOf          "Leipzig" ;
         nif:beginIndex        "8" ;
-        nif:endIndex          "14" ;
+        nif:endIndex          "15" ;
         nif:referenceContext  <http://127.0.0.1:9995/spotlight#char=0,15> ;
-        itsrdf:taIdentRef     <http://dbpedia.org/resource/Berlin> .
+        itsrdf:taIdentRef     <http://dbpedia.org/resource/Leipzig> .
