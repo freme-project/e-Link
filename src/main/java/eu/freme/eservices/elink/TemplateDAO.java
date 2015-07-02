@@ -27,7 +27,8 @@ public class TemplateDAO {
     
     private Model templatesModel = null;
     org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TemplateDAO.class);
-
+    private final String dataLocation = "/home/u231015/workspace/templates.ttl";
+    
     public TemplateDAO() throws WrongTemplateSyntaxException {
         init();
     }
@@ -42,7 +43,7 @@ public class TemplateDAO {
         try {
 //            URL url =  this.getClass().getResource("/data/templates.ttl");
 //            templatesModel.read(url.getPath());
-            templatesModel.read("/home/u231015/workspace/templates.ttl");
+            templatesModel.read(dataLocation);
 //            templatesModel.read("/Users/Milan/Documents/research/repositories/freme-project-repos/e-Link/src/main/resources/data/templates.ttl");
 //            logger.info("The templates have been successfully loaded.");
         } catch (org.apache.jena.riot.RiotException ex) {
@@ -134,10 +135,10 @@ public class TemplateDAO {
     // Saves the model.
     public void saveModel() {
         
-        String fileName = "/Users/Milan/Documents/research/repositories/freme-project-repos/e-Link/src/main/resources/data/templates.ttl";
+//        String fileName = "/Users/Milan/Documents/research/repositories/freme-project-repos/e-Link/src/main/resources/data/templates.ttl";
         FileWriter out = null;
         try {
-            out = new FileWriter( fileName );
+            out = new FileWriter( dataLocation );
             templatesModel.write( out, "TTL" );
         } catch (IOException ex) {
             Logger.getLogger(DataEnricher.class.getName()).log(Level.SEVERE, null, ex);
