@@ -8,13 +8,20 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.vocabulary.RDF;
+
 import eu.freme.eservices.elink.exceptions.WrongTemplateSyntaxException;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -27,19 +34,35 @@ public class TemplateDAO {
     
     private Model templatesModel = null;
     org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(TemplateDAO.class);
-    private final String dataLocation = "/home/u231015/workspace/templates.ttl";
-    
-    public TemplateDAO() throws WrongTemplateSyntaxException {
-        init();
-    }
-    
+    private String dataLocation;
+
+	@Value("${workspace.location:workspace}")
+	String workspaceLocation;
+	
+    @PostConstruct
+	public void init() throws WrongTemplateSyntaxException{
+		// create workspace folder
+		File workspace = new File(workspaceLocation + File.separator + "e-link");
+		if( !workspace.exists() ){
+			workspace.mkdirs();
+		}
+		
+		this.dataLocation = workspace.getAbsolutePath() + File.separator +  "templates.ttl";
+				
+		populateTemplates();
+	}
+        
     /**
      * This method is executed only ones at the beginning.
      * It populates the list of templates.
      */
-    private void init() throws WrongTemplateSyntaxException {
+    private void populateTemplates() throws WrongTemplateSyntaxException {
         
         templatesModel = ModelFactory.createDefaultModel();
+        
+        if( !new File(dataLocation).exists() ){
+        	return;
+        }
         try {
 //            URL url =  this.getClass().getResource("/data/templates.ttl");
 //            templatesModel.read(url.getPath());
@@ -252,4 +275,8 @@ public class TemplateDAO {
     public Model getAllTemplatesInRDF() {
         return templatesModel;
     }
+    
+	public void setWorkspaceLocation(String workspaceLocation) {
+		this.workspaceLocation = workspaceLocation;
+	}
 }
