@@ -18,6 +18,11 @@ public class Template {
         this.query = query;
     }
     
+    public Template(String endpoint, String query) {
+        this.endpoint = endpoint;
+        this.query = query;
+    }
+    
     /**
      * @return the id
      */
