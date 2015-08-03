@@ -56,10 +56,11 @@ public class Exporter {
         if(iter.hasNext()) {
             Statement stm = iter.nextStatement();
             Resource tRes = stm.getSubject();
-            String templateId = tRes.getProperty(model.getProperty("http://www.freme-project.eu/ns#templateId")).getObject().asLiteral().toString();
+//            String templateId = tRes.getProperty(model.getProperty("http://www.freme-project.eu/ns#templateId")).getObject().asLiteral().toString();
             String endpoint = tRes.getProperty(model.getProperty("http://www.freme-project.eu/ns#endpoint")).getObject().asLiteral().toString();
             String query = tRes.getProperty(model.getProperty("http://www.freme-project.eu/ns#query")).getObject().asLiteral().toString();
-            t = new Template(templateId, endpoint, query);
+//            t = new Template(templateId, endpoint, query);
+            t = new Template(endpoint, query);
             return t;
         }
         return t;        
