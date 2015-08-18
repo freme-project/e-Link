@@ -1,4 +1,4 @@
-package eu.freme.eservices.elink;
+package eu.freme.eservices.elink.api;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -6,6 +6,8 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import eu.freme.eservices.elink.Template;
+import eu.freme.eservices.elink.TemplateDAO;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;

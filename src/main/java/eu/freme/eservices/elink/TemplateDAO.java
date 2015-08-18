@@ -1,13 +1,18 @@
 
 package eu.freme.eservices.elink;
 
+import eu.freme.eservices.elink.api.DataEnricher;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
+import com.hp.hpl.jena.vocabulary.RDFS;
+import eu.freme.eservices.elink.exceptions.TemplateNotFoundException;
+//import static com.hp.hpl.jena.vocabulary.RDFS.label;
 
 import eu.freme.eservices.elink.exceptions.WrongTemplateSyntaxException;
 
@@ -42,12 +47,15 @@ public class TemplateDAO {
     @PostConstruct
 	public void init() throws WrongTemplateSyntaxException{
 		// create workspace folder
+            System.out.println(workspaceLocation);
 		File workspace = new File(workspaceLocation + File.separator + "e-link");
 		if( !workspace.exists() ){
 			workspace.mkdirs();
 		}
 		
 		this.dataLocation = workspace.getAbsolutePath() + File.separator +  "templates.ttl";
+            System.out.println(this.dataLocation);
+//		this.dataLocation = workspace.getAbsolutePath() + File.separator +  "templates-new.ttl";
 				
 		populateTemplates();
 	}
@@ -84,10 +92,16 @@ public class TemplateDAO {
         id);
 
         if(iter.hasNext()) {
-            Template t = new Template(id, getTemplateEndpoint(id), getTemplateQuery(id));
+            Template t = new Template(
+                    id,
+                    getTemplateEndpoint(id),
+                    getTemplateQuery(id),
+                    getTemplateLabel(id),
+                    getTemplateDescription(id)
+            );
             return t;
         } else {
-            return null;
+            throw new TemplateNotFoundException("Template with id: \"" + id + "\" does not exist.");
         }
     }
     
@@ -124,6 +138,40 @@ public class TemplateDAO {
         return null;
     }
     
+    // Return a label for a given template identified with its ID.
+    public String getTemplateLabel(String id) {
+        
+        StmtIterator iter = templatesModel.listStatements(
+                null,
+                RDFS.label,
+                id);
+
+        if(iter.hasNext()) {
+            Statement stm = iter.nextStatement();
+            Resource subj = stm.getSubject().asResource();
+            String label = subj.getProperty(RDFS.label).getObject().asLiteral().toString();
+            return label;
+        }
+        return null;
+    }
+    
+    // Return a query for a given template identified with its ID.
+    public String getTemplateDescription(String id) {
+        
+        StmtIterator iter = templatesModel.listStatements(
+                null,
+                templatesModel.getProperty("http://www.freme-project.eu/ns#templateId"),
+                id);
+
+        if(iter.hasNext()) {
+            Statement stm = iter.nextStatement();
+            Resource subj = stm.getSubject().asResource();
+            String description = subj.getProperty(DCTerms.description).getObject().asLiteral().toString();
+            return description;
+        }
+        return null;
+    }
+    
     // Creates a new template in the model.
     public void addTemplate(Template t) {
         
@@ -152,6 +200,19 @@ public class TemplateDAO {
                 templateRes,
                 templatesModel.getProperty("http://www.freme-project.eu/ns#endpoint"),
                 t.getEndpoint());
+        
+        // Label
+        templatesModel.add(
+                templateRes,
+                RDFS.label,
+                t.getLabel());
+        
+        // Description
+        templatesModel.add(
+                templateRes,
+                DCTerms.description,
+                t.getDescription());
+        
         saveModel();        
     }
     
@@ -213,7 +274,10 @@ public class TemplateDAO {
             String templateId = tmpRes.getProperty(templatesModel.getProperty("http://www.freme-project.eu/ns#templateId")).getObject().asLiteral().toString();
             String query = tmpRes.getProperty(templatesModel.getProperty("http://www.freme-project.eu/ns#query")).getObject().asLiteral().toString();
             String endpoint = tmpRes.getProperty(templatesModel.getProperty("http://www.freme-project.eu/ns#endpoint")).getObject().asLiteral().toString();
-            Template t = new Template(templateId, endpoint, query);
+            String label = tmpRes.getProperty(RDFS.label).getObject().asLiteral().toString();
+            String description = tmpRes.getProperty(DCTerms.description).getObject().asLiteral().toString();
+
+            Template t = new Template(templateId, endpoint, query, label, description);
             templates.add(t);
 
         }
@@ -276,7 +340,7 @@ public class TemplateDAO {
         return templatesModel;
     }
     
-	public void setWorkspaceLocation(String workspaceLocation) {
-		this.workspaceLocation = workspaceLocation;
-	}
+    public void setWorkspaceLocation(String workspaceLocation) {
+        this.workspaceLocation = workspaceLocation;
+    }
 }
