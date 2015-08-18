@@ -261,7 +261,7 @@ public class TemplateDAO {
     // Returns all templates from a model.
     // The templates are returned as an array of Template objects.
     public ArrayList<Template> getAllTemplates() {
-        System.out.println(this.dataLocation);
+//        System.out.println(this.dataLocation);
             logger.info(this.dataLocation);
         ArrayList<Template> templates = new ArrayList();
         StmtIterator iter = templatesModel.listStatements(
