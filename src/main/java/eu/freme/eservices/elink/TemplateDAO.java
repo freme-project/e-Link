@@ -55,6 +55,7 @@ public class TemplateDAO {
 		
 		this.dataLocation = workspace.getAbsolutePath() + File.separator +  "templates.ttl";
             System.out.println(this.dataLocation);
+            logger.info(this.dataLocation);
 //		this.dataLocation = workspace.getAbsolutePath() + File.separator +  "templates-new.ttl";
 				
 		populateTemplates();
@@ -261,6 +262,7 @@ public class TemplateDAO {
     // The templates are returned as an array of Template objects.
     public ArrayList<Template> getAllTemplates() {
         System.out.println(this.dataLocation);
+            logger.info(this.dataLocation);
         ArrayList<Template> templates = new ArrayList();
         StmtIterator iter = templatesModel.listStatements(
                 null,
