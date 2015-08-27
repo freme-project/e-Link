@@ -189,6 +189,26 @@ public class TemplateDAO {
         
         templatesModel.enterCriticalSection(Lock.WRITE);
         try {
+            
+            int currentId = 0;
+                StmtIterator iter = templatesModel.listStatements(
+                        null,
+                        RDF.type,
+                        templatesModel.getResource("http://www.freme-project.eu/ns#Template")
+                );
+
+                while(iter.hasNext()) {
+                    Statement stm = iter.nextStatement();
+                    Resource templRes = stm.getSubject();
+                    int id = Integer.parseInt(templRes.getProperty(templatesModel.getProperty("http://www.freme-project.eu/ns#templateId")).getObject().asLiteral().toString());
+                    if(id > currentId) {
+                        currentId = id;
+                    }
+                }
+            currentId += 1;
+            
+            t.setId(currentId+"");
+            
             Resource templateRes = templatesModel.createResource("http://www.freme-project.eu/data/templates/"+t.getId());
 
             // RDF type
@@ -317,20 +337,25 @@ public class TemplateDAO {
 
     // Creates unique ID for a template.
     public String generateTemplateId() {
+        templatesModel.enterCriticalSection(Lock.READ);
         int currentId = 0;
-        StmtIterator iter = templatesModel.listStatements(
-                null,
-                RDF.type,
-                templatesModel.getResource("http://www.freme-project.eu/ns#Template")
-        );
-        
-        while(iter.hasNext()) {
-            Statement stm = iter.nextStatement();
-            Resource templRes = stm.getSubject();
-            int id = Integer.parseInt(templRes.getProperty(templatesModel.getProperty("http://www.freme-project.eu/ns#templateId")).getObject().asLiteral().toString());
-            if(id > currentId) {
-                currentId = id;
+        try {
+            StmtIterator iter = templatesModel.listStatements(
+                    null,
+                    RDF.type,
+                    templatesModel.getResource("http://www.freme-project.eu/ns#Template")
+            );
+
+            while(iter.hasNext()) {
+                Statement stm = iter.nextStatement();
+                Resource templRes = stm.getSubject();
+                int id = Integer.parseInt(templRes.getProperty(templatesModel.getProperty("http://www.freme-project.eu/ns#templateId")).getObject().asLiteral().toString());
+                if(id > currentId) {
+                    currentId = id;
+                }
             }
+        } finally {
+            templatesModel.leaveCriticalSection() ;
         }
         currentId += 1;
         return currentId+"";
