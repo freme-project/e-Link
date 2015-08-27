@@ -187,7 +187,7 @@ public class TemplateDAO {
     // Creates a new template in the model.
     public void addTemplate(Template t) {
         
-        templatesModel.enterCriticalSection(Lock.READ);
+        templatesModel.enterCriticalSection(Lock.WRITE);
         try {
             Resource templateRes = templatesModel.createResource("http://www.freme-project.eu/data/templates/"+t.getId());
 
