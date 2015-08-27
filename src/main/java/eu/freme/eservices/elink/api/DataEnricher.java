@@ -8,6 +8,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import eu.freme.eservices.elink.Template;
 import eu.freme.eservices.elink.TemplateDAO;
+import eu.freme.eservices.elink.exceptions.BadRequestException;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class DataEnricher {
      */
     public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
         
+        try {
+        
         StmtIterator iter = model.listStatements(null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode) null);
 
         while(iter.hasNext()) {
@@ -56,5 +59,8 @@ public class DataEnricher {
             e.close();
         }
         return model;
+        } catch (Exception ex) {
+            throw new BadRequestException("It seems your SPARQL template is not correctly defined.");            
+        }
     }
 }
