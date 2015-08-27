@@ -8,6 +8,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.shared.Lock;
 import com.hp.hpl.jena.vocabulary.DCTerms;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -176,44 +177,48 @@ public class TemplateDAO {
     // Creates a new template in the model.
     public void addTemplate(Template t) {
         
-        Resource templateRes = templatesModel.createResource("http://www.freme-project.eu/data/templates/"+t.getId());
-        
-        // RDF type
-        templatesModel.add(
-                templateRes,
-                RDF.type,
-                templatesModel.getResource("http://www.freme-project.eu/ns#Template"));
-        
-        // ID
-        templatesModel.add(
-                templateRes,
-                templatesModel.getProperty("http://www.freme-project.eu/ns#templateId"),
-                t.getId()+"");
-        
-        // Query
-        templatesModel.add(
-                templateRes,
-                templatesModel.getProperty("http://www.freme-project.eu/ns#query"),
-                t.getQuery());
-        
-        // Endpoint
-        templatesModel.add(
-                templateRes,
-                templatesModel.getProperty("http://www.freme-project.eu/ns#endpoint"),
-                t.getEndpoint());
-        
-        // Label
-        templatesModel.add(
-                templateRes,
-                RDFS.label,
-                t.getLabel());
-        
-        // Description
-        templatesModel.add(
-                templateRes,
-                DCTerms.description,
-                t.getDescription());
-        
+        templatesModel.enterCriticalSection(Lock.READ);
+        try {
+            Resource templateRes = templatesModel.createResource("http://www.freme-project.eu/data/templates/"+t.getId());
+
+            // RDF type
+            templatesModel.add(
+                    templateRes,
+                    RDF.type,
+                    templatesModel.getResource("http://www.freme-project.eu/ns#Template"));
+
+            // ID
+            templatesModel.add(
+                    templateRes,
+                    templatesModel.getProperty("http://www.freme-project.eu/ns#templateId"),
+                    t.getId()+"");
+
+            // Query
+            templatesModel.add(
+                    templateRes,
+                    templatesModel.getProperty("http://www.freme-project.eu/ns#query"),
+                    t.getQuery());
+
+            // Endpoint
+            templatesModel.add(
+                    templateRes,
+                    templatesModel.getProperty("http://www.freme-project.eu/ns#endpoint"),
+                    t.getEndpoint());
+
+            // Label
+            templatesModel.add(
+                    templateRes,
+                    RDFS.label,
+                    t.getLabel());
+
+            // Description
+            templatesModel.add(
+                    templateRes,
+                    DCTerms.description,
+                    t.getDescription());
+        } finally {
+            templatesModel.leaveCriticalSection() ;
+        }
         saveModel();        
     }
     
