@@ -84,7 +84,6 @@ public class TemplateDAO {
         }
     }
     
-    
     // Returns template by its ID.
     public Template getTemplateById(String id) {
         
@@ -105,6 +104,17 @@ public class TemplateDAO {
         } else {
             throw new TemplateNotFoundException("Template with id: \"" + id + "\" does not exist.");
         }
+    }
+    
+    // Returns template by its ID.
+    public boolean containsTemplate(String id) {
+        
+        StmtIterator iter = templatesModel.listStatements(
+        null,
+        templatesModel.getProperty("http://www.freme-project.eu/ns#templateId"),
+        id);
+        
+        return iter.hasNext();
     }
     
     // Return an endpoint for a given template identified with its ID.
@@ -293,8 +303,16 @@ public class TemplateDAO {
     
     // Updates a template.
     public void updateTemplate(Template t) {
-        removeTemplateById(t.getId());
-        addTemplate(t);
+        if(containsTemplate(t.getId())) {
+            // template with such id exists, its contents will be updated
+            removeTemplateById(t.getId());
+            addTemplate(t);
+        } else {
+            // template witch such id does not exist
+            // generate id for the new template and add it
+            t.setId(generateTemplateId());
+            addTemplate(t);
+        }
     }
 
     // Creates unique ID for a template.
