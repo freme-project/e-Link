@@ -26,16 +26,22 @@ public class Template {
     private String id;
     private String endpoint;
     private String query;
+    private String label;
+    private String description;
 
-    public Template(String id, String endpoint, String query) {
+    public Template(String id, String endpoint, String query, String label, String description) {
         this.id = id;
         this.endpoint = endpoint;
         this.query = query;
+        this.label = label;
+        this.description = description;
     }
     
-    public Template(String endpoint, String query) {
+    public Template(String endpoint, String query, String label, String description) {
         this.endpoint = endpoint;
         this.query = query;
+        this.label = label;
+        this.description = description;
     }
     
     /**
@@ -79,4 +85,32 @@ public class Template {
     public void setQuery(String query) {
         this.query = query;
     }    
+
+    /**
+     * @return the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
