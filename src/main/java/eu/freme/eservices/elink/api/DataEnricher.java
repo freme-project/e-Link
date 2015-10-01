@@ -19,16 +19,13 @@ package eu.freme.eservices.elink.api;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-import eu.freme.eservices.elink.Template;
-import eu.freme.eservices.elink.TemplateDAO;
+import com.hp.hpl.jena.rdf.model.*;
 import eu.freme.eservices.elink.exceptions.BadRequestException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import eu.freme.common.persistence.*;
 
 
 /**
@@ -54,7 +51,7 @@ public class DataEnricher {
      * @param templateId     The ID of the template to be used for enrichment.
      * @param templateParams Map of user defined parameters.
      */
-    public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
+    /*public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
         
         try {
         
@@ -78,6 +75,37 @@ public class DataEnricher {
         return model;
         } catch (Exception ex) {
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");            
+        }
+    }*/
+
+    public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
+        try {
+            StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
+
+            while(ex.hasNext()) {
+                Statement stm = ex.nextStatement();
+                String entityURI = stm.getObject().asResource().getURI();
+                Template t = this.templateDAO.findOneById(templateId + "");
+                if(t == null) {
+                    return null;
+                }
+
+                String query = t.getQuery().replaceAll("@@@entity_uri@@@", entityURI);
+
+                Map.Entry resModel;
+                for(Iterator e = templateParams.entrySet().iterator(); e.hasNext(); query = query.replaceAll("@@@" + (String)resModel.getKey() + "@@@", (String)resModel.getValue())) {
+                    resModel = (Map.Entry)e.next();
+                }
+
+                QueryExecution e1 = QueryExecutionFactory.sparqlService(t.getEndpoint(), query);
+                Model resModel1 = e1.execConstruct();
+                model.add(resModel1);
+                e1.close();
+            }
+
+            return model;
+        } catch (Exception var11) {
+            throw new eu.freme.eservices.elink.exceptions.BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
 }
