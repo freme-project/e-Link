@@ -20,12 +20,13 @@ package eu.freme.eservices.elink.api;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.rdf.model.*;
-import eu.freme.eservices.elink.exceptions.BadRequestException;
+import eu.freme.common.persistence.dao.TemplateDAO;
+import eu.freme.common.persistence.model.Template;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import eu.freme.common.persistence.*;
 
 
 /**
@@ -51,33 +52,6 @@ public class DataEnricher {
      * @param templateId     The ID of the template to be used for enrichment.
      * @param templateParams Map of user defined parameters.
      */
-    /*public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
-        
-        try {
-        
-        StmtIterator iter = model.listStatements(null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode) null);
-
-        while(iter.hasNext()) {
-            Statement stm = iter.nextStatement();
-            String entityURI = stm.getObject().asResource().getURI();
-            Template t = templateDAO.getTemplateById(templateId+"");
-            if(t == null)
-                return null;
-            String query = t.getQuery().replaceAll("@@@entity_uri@@@", entityURI);
-            for (Map.Entry<String, String> entry : templateParams.entrySet()) {
-                query = query.replaceAll("@@@"+entry.getKey()+"@@@", entry.getValue());
-            }
-            QueryExecution e = QueryExecutionFactory.sparqlService(t.getEndpoint(), query);
-            Model resModel = e.execConstruct();
-            model.add(resModel);
-            e.close();
-        }
-        return model;
-        } catch (Exception ex) {
-            throw new BadRequestException("It seems your SPARQL template is not correctly defined.");            
-        }
-    }*/
-
     public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
         try {
             StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
