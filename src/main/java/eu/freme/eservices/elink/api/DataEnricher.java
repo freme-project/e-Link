@@ -20,6 +20,7 @@ package eu.freme.eservices.elink.api;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.rdf.model.*;
+import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.persistence.dao.TemplateDAO;
 import eu.freme.common.persistence.model.Template;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +80,7 @@ public class DataEnricher {
 
             return model;
         } catch (Exception var11) {
-            throw new eu.freme.eservices.elink.exceptions.BadRequestException("It seems your SPARQL template is not correctly defined.");
+            throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
 }
