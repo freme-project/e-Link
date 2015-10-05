@@ -21,6 +21,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.rdf.model.*;
 import eu.freme.common.exception.BadRequestException;
+import eu.freme.common.exception.UnsupportedEndpointType;
 import eu.freme.common.persistence.dao.TemplateDAO;
 import eu.freme.common.persistence.model.Template;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ public class DataEnricher {
     private final String basePath = "http://www.freme-project.eu/data/templates/"; 
     private final String templatesNs = "http://www.freme-project.eu/ns#"; 
 
+    private final String exploreQuery = "CONSTRUCT { <@@@entity_uri@@@> ?p ?o . } WHERE { <@@@entity_uri@@@> ?p ?o . }";
+    
     public DataEnricher(){
     }
     
@@ -82,5 +85,42 @@ public class DataEnricher {
         } catch (Exception var11) {
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
+    }
+    
+    /**
+     * Called to describe a resource
+     * @param resource          Resource URL.
+     * @param templateId     The ID of the template to be used for enrichment.
+     * @param templateParams Map of user defined parameters.
+     */
+    public Model exploreResource(String resource, String endpoint, String endpointType) throws BadRequestException {
+        
+        if (endpointType == null) {
+            return enrichViaSPARQL(resource, endpoint);
+        } else if(endpointType.equals("sparql")) {
+            return enrichViaSPARQL(resource, endpoint);
+        } else if (endpointType.equals("ldf")){
+            return enrichViaLDF(resource, endpoint);
+        } else{
+            throw new UnsupportedEndpointType("Unsupported endpoint type. Only 'sparql' and 'ldf' are supported.");        
+        }
+    }
+
+    private Model enrichViaSPARQL(String resource, String endpoint) throws BadRequestException {
+        try {
+            Model model = ModelFactory.createDefaultModel();
+            String query = exploreQuery.replaceAll("@@@entity_uri@@@", resource);
+            QueryExecution e1 = QueryExecutionFactory.sparqlService(endpoint, query);
+            Model resModel1 = e1.execConstruct();
+            model.add(resModel1);
+            e1.close();
+            return model;
+        } catch (Exception var11) {
+            throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
+        }
+    }
+
+    private Model enrichViaLDF(String resource, String endpoint) {
+        throw new UnsupportedOperationException("LDF is not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
