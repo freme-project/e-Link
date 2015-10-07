@@ -17,8 +17,11 @@
  */
 package eu.freme.eservices.elink.api;
 
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.rdf.model.*;
 import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.UnsupportedEndpointType;
@@ -29,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.linkeddatafragments.model.LinkedDataFragmentGraph;
 
 
 /**
@@ -80,7 +84,6 @@ public class DataEnricher {
                 model.add(resModel1);
                 e1.close();
             }
-
             return model;
         } catch (Exception var11) {
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
@@ -100,7 +103,7 @@ public class DataEnricher {
         } else if(endpointType.equals("sparql")) {
             return enrichViaSPARQL(resource, endpoint);
         } else if (endpointType.equals("ldf")){
-            return enrichViaLDF(resource, endpoint);
+            return enrichViaLDFExplore(resource, endpoint);
         } else{
             throw new UnsupportedEndpointType("Unsupported endpoint type. Only 'sparql' and 'ldf' are supported.");        
         }
@@ -120,7 +123,15 @@ public class DataEnricher {
         }
     }
 
-    private Model enrichViaLDF(String resource, String endpoint) {
-        throw new UnsupportedOperationException("LDF is not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private Model enrichViaLDFExplore(String resource, String endpoint) {
+        Model model;
+        LinkedDataFragmentGraph ldfg = new LinkedDataFragmentGraph(endpoint);
+        model = ModelFactory.createModelForGraph(ldfg);
+        String queryString = exploreQuery.replaceAll("@@@entity_uri@@@", resource);
+        Query qry = QueryFactory.create(queryString);
+        QueryExecution qe = QueryExecutionFactory.create(qry, model);
+        Model returnModel = qe.execConstruct();
+        qe.close();
+        return returnModel;
     }
 }
