@@ -68,9 +68,10 @@ public class DataEnricher {
                 Statement stm = ex.nextStatement();
                 String entityURI = stm.getObject().asResource().getURI();
                 Template t = this.templateDAO.findOneById(templateId + "");
-                if(t == null) {
+                // not necessary, already checked by templateDAO.findOneById(), which throws an OwnedResourceNotFoundException("Could not find resource with id=\'" + id + "\'")
+                /*if(t == null) {
                     return null;
-                }
+                }*/
 
                 String query = t.getQuery().replaceAll("@@@entity_uri@@@", entityURI);
 
