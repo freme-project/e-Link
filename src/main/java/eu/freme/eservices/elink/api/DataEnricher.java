@@ -60,14 +60,14 @@ public class DataEnricher {
      * @param templateId     The ID of the template to be used for enrichment.
      * @param templateParams Map of user defined parameters.
      */
-    public Model enrichNIF(Model model, int templateId, HashMap<String, String> templateParams) {
+    public Model enrichNIF(Model model, long templateId, HashMap<String, String> templateParams) {
         try {
             StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
 
             while(ex.hasNext()) {
                 Statement stm = ex.nextStatement();
                 String entityURI = stm.getObject().asResource().getURI();
-                Template t = this.templateDAO.findOneById(templateId + "");
+                Template t = this.templateDAO.findOneById(templateId);
                 // not necessary, already checked by templateDAO.findOneById(), which throws an OwnedResourceNotFoundException("Could not find resource with id=\'" + id + "\'")
                 /*if(t == null) {
                     return null;
