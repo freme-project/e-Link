@@ -27,6 +27,7 @@ import eu.freme.common.exception.BadRequestException;
 import eu.freme.common.exception.UnsupportedEndpointType;
 import eu.freme.common.persistence.dao.TemplateDAO;
 import eu.freme.common.persistence.model.Template;
+import eu.freme.common.persistence.model.Template.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -55,47 +56,108 @@ public class DataEnricher {
     }
     
     /**
-     * Called to enrich NIF document
+     * Called to enrich NIF document with a template.
      * @param model          The NIF document represented as Jena model.
      * @param templateId     The ID of the template to be used for enrichment.
      * @param templateParams Map of user defined parameters.
      */
-    public Model enrichNIF(Model model, long templateId, HashMap<String, String> templateParams) {
+    public Model enrichWithTemplate(Model model, Template template, HashMap<String, String> templateParams) {
         try {
-            StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
-
-            while(ex.hasNext()) {
-                Statement stm = ex.nextStatement();
-                String entityURI = stm.getObject().asResource().getURI();
-                Template t = this.templateDAO.findOneById(templateId);
-                // not necessary, already checked by templateDAO.findOneById(), which throws an OwnedResourceNotFoundException("Could not find resource with id=\'" + id + "\'")
-                /*if(t == null) {
-                    return null;
-                }*/
-
-                String query = t.getQuery().replaceAll("@@@entity_uri@@@", entityURI);
-
-                Map.Entry resModel;
-                for(Iterator e = templateParams.entrySet().iterator(); e.hasNext(); query = query.replaceAll("@@@" + (String)resModel.getKey() + "@@@", (String)resModel.getValue())) {
-                    resModel = (Map.Entry)e.next();
-                }
-
-                QueryExecution e1 = QueryExecutionFactory.sparqlService(t.getEndpoint(), query);
-                Model resModel1 = e1.execConstruct();
-                model.add(resModel1);
-                e1.close();
+            if(template.getType() == Type.SPARQL) {
+                return enrichWithTemplateSPARQL(model, template, templateParams);
+            } else if(template.getType() == Type.LDF) {
+                return enrichWithTemplateLDF(model, template, templateParams);                
             }
             return model;
-        } catch (Exception var11) {
+        } catch (Exception ex) {
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
     
     /**
-     * Called to describe a resource
-     * @param resource          Resource URL.
+     * Called to enrich NIF document with template using SPARQL endpoint.
+     * @param model          The NIF document represented as Jena model.
      * @param templateId     The ID of the template to be used for enrichment.
      * @param templateParams Map of user defined parameters.
+     */
+    public Model enrichWithTemplateSPARQL(Model model, Template template, HashMap<String, String> templateParams) {
+        try {
+            StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
+
+            // Iterating through every entity and enriching it.
+            while(ex.hasNext()) {
+                
+                Statement stm = ex.nextStatement();
+                String entityURI = stm.getObject().asResource().getURI();
+                
+                // Replacing the entity_uri fields in the template with the entity URI.
+                String query = template.getQuery().replaceAll("@@@entity_uri@@@", entityURI);
+
+                Map.Entry resModel;
+                // Replacing the other custom fields in the template with the corresponding values.
+                for(Iterator e = templateParams.entrySet().iterator(); e.hasNext(); query = query.replaceAll("@@@" + (String)resModel.getKey() + "@@@", (String)resModel.getValue())) {
+                    resModel = (Map.Entry)e.next();
+                }
+
+                String endpoint = template.getEndpoint();
+                // Executing the enrichement.
+                QueryExecution e1 = QueryExecutionFactory.sparqlService(endpoint, query);
+                Model resModel1 = e1.execConstruct();
+                model.add(resModel1);
+                e1.close();
+            }
+            return model;
+        } catch (Exception ex) {
+            throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
+        }
+    }
+
+     /**
+     * Called to enrich NIF document template using LDF endpoint.
+     * @param model          The NIF document represented as Jena model.
+     * @param templateId     The ID of the template to be used for enrichment.
+     * @param templateParams Map of user defined parameters.
+     */
+    public Model enrichWithTemplateLDF(Model model, Template template, HashMap<String, String> templateParams) {
+        try {
+            StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
+
+            // Iterating through every entity and enriching it.
+            while(ex.hasNext()) {
+                Statement stm = ex.nextStatement();
+                String entityURI = stm.getObject().asResource().getURI();
+
+                // Replacing the entity_uri fields in the template with the entity URI.
+                String query = template.getQuery().replaceAll("@@@entity_uri@@@", entityURI);
+
+                Map.Entry resModel;
+                // Replacing the other custom fields in the template with the corresponding values.
+                for(Iterator e = templateParams.entrySet().iterator(); e.hasNext(); query = query.replaceAll("@@@" + (String)resModel.getKey() + "@@@", (String)resModel.getValue())) {
+                    resModel = (Map.Entry)e.next();
+                }
+
+                // Executing the enrichement.
+                Model ldfModel;
+                LinkedDataFragmentGraph ldfg = new LinkedDataFragmentGraph(template.getEndpoint());
+                ldfModel = ModelFactory.createModelForGraph(ldfg);
+                Query qry = QueryFactory.create(query);
+                QueryExecution qe = QueryExecutionFactory.create(qry, ldfModel);
+                Model enrichedModel = qe.execConstruct();
+                model.add(enrichedModel);
+                qe.close();                
+            }
+            return model;
+        } catch (Exception ex) {
+            throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
+        }
+    }
+
+    
+    /**
+     * Called to describe a resource.
+     * @param resource     Resource URL.
+     * @param endpoint     Endpoint URL.
+     * @param endpointType Endpoint type.
      */
     public Model exploreResource(String resource, String endpoint, String endpointType) throws BadRequestException {
         
@@ -119,20 +181,24 @@ public class DataEnricher {
             model.add(resModel1);
             e1.close();
             return model;
-        } catch (Exception var11) {
+        } catch (Exception ex) {
             throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
         }
     }
 
     private Model enrichViaLDFExplore(String resource, String endpoint) {
-        Model model;
-        LinkedDataFragmentGraph ldfg = new LinkedDataFragmentGraph(endpoint);
-        model = ModelFactory.createModelForGraph(ldfg);
-        String queryString = exploreQuery.replaceAll("@@@entity_uri@@@", resource);
-        Query qry = QueryFactory.create(queryString);
-        QueryExecution qe = QueryExecutionFactory.create(qry, model);
-        Model returnModel = qe.execConstruct();
-        qe.close();
-        return returnModel;
+        try {
+            Model model;
+            LinkedDataFragmentGraph ldfg = new LinkedDataFragmentGraph(endpoint);
+            model = ModelFactory.createModelForGraph(ldfg);
+            String queryString = exploreQuery.replaceAll("@@@entity_uri@@@", resource);
+            Query qry = QueryFactory.create(queryString);
+            QueryExecution qe = QueryExecutionFactory.create(qry, model);
+            Model returnModel = qe.execConstruct();
+            qe.close();
+            return returnModel;
+        } catch (Exception ex) {
+            throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
+        }
     }
 }
