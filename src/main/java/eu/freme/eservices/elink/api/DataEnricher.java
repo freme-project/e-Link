@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.linkeddatafragments.model.LinkedDataFragmentGraph;
 
@@ -74,7 +73,7 @@ public class DataEnricher {
             }
             return model;
         } catch (Exception ex) {
-            logger.error(ex.getStackTrace());
+            logger.error(ex);
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
@@ -113,7 +112,7 @@ public class DataEnricher {
             }
             return model;
         } catch (Exception ex) {
-            logger.error(ex.getStackTrace());
+            logger.error(ex);
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
@@ -154,7 +153,7 @@ public class DataEnricher {
             }
             return model;
         } catch (Exception ex) {
-            logger.error(ex.getStackTrace());
+            logger.error(ex);
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
@@ -189,7 +188,7 @@ public class DataEnricher {
             e1.close();
             return model;
         } catch (Exception ex) {
-            logger.error(ex.getStackTrace());
+            logger.error(ex);
             throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
         }
     }
@@ -206,7 +205,7 @@ public class DataEnricher {
             qe.close();
             return returnModel;
         } catch (Exception ex) {
-            logger.error(ex.getStackTrace());
+            logger.error(ex);
             throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
         }
     }
