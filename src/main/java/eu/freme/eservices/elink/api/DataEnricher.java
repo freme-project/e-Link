@@ -31,6 +31,8 @@ import eu.freme.common.persistence.model.Template.Type;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -73,7 +75,7 @@ public class DataEnricher {
             }
             return model;
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.error(getFullStackTrace(ex));
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
@@ -112,7 +114,7 @@ public class DataEnricher {
             }
             return model;
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.error(getFullStackTrace(ex));
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
@@ -153,7 +155,7 @@ public class DataEnricher {
             }
             return model;
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.error(getFullStackTrace(ex));
             throw new BadRequestException("It seems your SPARQL template is not correctly defined.");
         }
     }
@@ -188,7 +190,7 @@ public class DataEnricher {
             e1.close();
             return model;
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.error(getFullStackTrace(ex));
             throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
         }
     }
@@ -205,8 +207,15 @@ public class DataEnricher {
             qe.close();
             return returnModel;
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.error(getFullStackTrace(ex));
             throw new BadRequestException("Something went wrong when retrieving the content. Please contact the maintainers.");
         }
+    }
+
+    private String getFullStackTrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        String exceptionAsString = sw.toString();
+        return exceptionAsString;
     }
 }
