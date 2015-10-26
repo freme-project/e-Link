@@ -67,6 +67,11 @@
 			<artifactId>common</artifactId>
 			<version>0.4-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>eu.freme</groupId>
+			<artifactId>broker</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
                 <dependency>
                     <groupId>org.linkeddatafragments</groupId>
                     <artifactId>ldf-client</artifactId>

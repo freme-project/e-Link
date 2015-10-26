@@ -133,6 +133,8 @@ public class DataEnricher {
         try {
             StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
 
+            Model enrichment = ModelFactory.createDefaultModel();
+
             // Iterating through every entity and enriching it.
             while(ex.hasNext()) {
                 Statement stm = ex.nextStatement();
@@ -154,9 +156,10 @@ public class DataEnricher {
                 Query qry = QueryFactory.create(query);
                 QueryExecution qe = QueryExecutionFactory.create(qry, ldfModel);
                 Model enrichedModel = qe.execConstruct();
-                model.add(enrichedModel);
+                enrichment.add(enrichedModel);
                 qe.close();                
             }
+            model.add(enrichment);
             return model;
         } catch (Exception ex) {
             logger.error(getFullStackTrace(ex));
