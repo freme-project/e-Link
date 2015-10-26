@@ -90,6 +90,8 @@ public class DataEnricher {
         try {
             StmtIterator ex = model.listStatements((Resource)null, model.getProperty("http://www.w3.org/2005/11/its/rdf#taIdentRef"), (RDFNode)null);
 
+            Model enrichment = ModelFactory.createDefaultModel();
+            
             // Iterating through every entity and enriching it.
             while(ex.hasNext()) {
                 
@@ -109,9 +111,11 @@ public class DataEnricher {
                 // Executing the enrichement.
                 QueryExecution e1 = QueryExecutionFactory.sparqlService(endpoint, query);
                 Model resModel1 = e1.execConstruct();
-                model.add(resModel1);
+                enrichment.add(resModel1);
                 e1.close();
             }
+            
+            model.add(enrichment);
             return model;
         } catch (Exception ex) {
             logger.error(getFullStackTrace(ex));
