@@ -68,9 +68,9 @@ public class DataEnricher {
      */
     public Model enrichWithTemplate(Model model, Template template, HashMap<String, String> templateParams) {
         try {
-            if(template.getType() == Type.SPARQL) {
+            if(template.getEndpointType() == Type.SPARQL) {
                 return enrichWithTemplateSPARQL(model, template, templateParams);
-            } else if(template.getType() == Type.LDF) {
+            } else if(template.getEndpointType() == Type.LDF) {
                 return enrichWithTemplateLDF(model, template, templateParams);                
             }
             return model;
