@@ -108,14 +108,14 @@ public class DataEnricher {
                 }
 
                 String endpoint = template.getEndpoint();
-                logger.error(endpoint);
-                logger.error(query);
+//                logger.error(endpoint);
+//                logger.error(query);
                 // Executing the enrichement.
                 QueryExecution e1 = QueryExecutionFactory.sparqlService(endpoint, query);
                 Model resModel1 = e1.execConstruct();
                 enrichment.add(resModel1);
                 e1.close();
-                Thread.sleep(500);
+                Thread.sleep(100);
             }
             
             model.add(enrichment);
