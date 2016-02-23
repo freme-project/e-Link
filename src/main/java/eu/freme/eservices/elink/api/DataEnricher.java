@@ -115,7 +115,7 @@ public class DataEnricher {
                 Model resModel1 = e1.execConstruct();
                 enrichment.add(resModel1);
                 e1.close();
-                Thread.sleep(300);
+                Thread.sleep(350);
             }
             
             model.add(enrichment);
